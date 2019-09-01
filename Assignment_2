@@ -1,0 +1,63 @@
+from math import floor, ceil
+import traceback
+
+
+class FastMultiplication(object):
+
+    def read_input(self,file_name):
+        try:
+            f = open(file_name,'r')
+            operand_1 = f.readline()
+            operand_2 = f.readline()
+            f.close()
+            return operand_1, operand_2
+        except:
+            print("Place the input file in the class path")
+            
+    def kartatsuba_multipliation(self, operand_1, operand_2):
+        print(str(operand_1) + " " + str(operand_2))
+        if len(str(operand_1)) == 1 or len(str(operand_2)) == 1:
+            return operand_1 * operand_2
+        else:
+            n = max(len(str(operand_1)),len(str(operand_2)))
+            m = ceil(n/2) 
+            
+            A1 = floor(operand_1 / 10**(m))
+            A2 = operand_1 % 10**(m)
+            B1 = floor(operand_2 / 10**(m))
+            B2 = operand_2 % 10**(m)
+            
+            A1B1 = self.kartatsuba_multipliation(A1, B1)
+            A2B2 = self.kartatsuba_multipliation(A2, B2)
+            
+            A1B2_plus_A2B1 = self.kartatsuba_multipliation((A1+A2), (B1+B2)) - A1B1 - A2B2
+            
+            mul_result = A1B1 * 10**(2*m) + (A1B2_plus_A2B1 * 10**m) + A2B2
+            return mul_result
+        
+    def write_out(self,file_name,result):
+        try:
+            f = open(file_name,'w')
+            f.write(result)
+            f.close()
+        except :
+            traceback.print_exc()
+            print("Unable to open file for write")
+
+def main():
+    
+    fast_multiplication = FastMultiplication()
+    operand_1, operand_2 = fast_multiplication.read_input('inputPS2.txt')     
+    operand_1 =  int(operand_1)
+    operand_2 = int (operand_2)
+  
+    print(operand_1, operand_2)
+    
+    output = fast_multiplication.kartatsuba_multipliation(operand_1, operand_2)
+    
+    print(output)
+    
+    fast_multiplication.write_out('outputPS2.txt',str(output))
+
+if __name__ == '__main__':   
+    main()              
