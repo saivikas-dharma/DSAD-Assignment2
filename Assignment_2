@@ -3,6 +3,8 @@ import traceback
 
 
 class FastMultiplication(object):
+    def __init__(self):
+        self.output_file = open('outputPS2.txt','w')
 
     def read_input(self,file_name):
         try:
@@ -15,7 +17,6 @@ class FastMultiplication(object):
             print("Place the input file in the class path")
             
     def kartatsuba_multipliation(self, operand_1, operand_2):
-        print(str(operand_1) + " " + str(operand_2))
         if len(str(operand_1)) == 1 or len(str(operand_2)) == 1:
             return operand_1 * operand_2
         else:
@@ -27,6 +28,10 @@ class FastMultiplication(object):
             B1 = floor(operand_2 / 10**(m))
             B2 = operand_2 % 10**(m)
             
+            intermediate_result = "A:"+str(operand_1)+" A1:"+str(A1)+" A2:"+str(A2)+"\n"
+            intermediate_result = intermediate_result + "B:"+str(operand_2)+" B1:"+str(B1)+" B2:"+str(B2)+"\n"            
+            self.write_intermediate_resut(intermediate_result)
+            
             A1B1 = self.kartatsuba_multipliation(A1, B1)
             A2B2 = self.kartatsuba_multipliation(A2, B2)
             
@@ -35,29 +40,35 @@ class FastMultiplication(object):
             mul_result = A1B1 * 10**(2*m) + (A1B2_plus_A2B1 * 10**m) + A2B2
             return mul_result
         
-    def write_out(self,file_name,result):
-        try:
-            f = open(file_name,'w')
-            f.write(result)
-            f.close()
-        except :
-            traceback.print_exc()
-            print("Unable to open file for write")
+    def write_intermediate_resut(self,result):
+        out_text = '''---------------------------------------------
+Intermediate Values of A1, B1 after partition:
+---------------------------------------------
+'''
+        self.output_file.write(out_text)
+        self.output_file.write(result+"\n")
+
+    def write_final_resut(self,result):
+        out_text = '''---------------------------------------------'''
+        out_text1 = '''---------------------------------------------'''
+        self.output_file.write(out_text+"\n")
+        self.output_file.write(result+"\n")
+        self.output_file.write(out_text1+"\n")
+       
 
 def main():
     
     fast_multiplication = FastMultiplication()
-    operand_1, operand_2 = fast_multiplication.read_input('inputPS2.txt')     
+    operand_1, operand_2 = fast_multiplication.read_input('inputPS2.txt')   
+    fast_multiplication.output_file.write("1st number, A: "+operand_1)
+    fast_multiplication.output_file.write("2nd number, B: "+operand_2+"\n")  
     operand_1 =  int(operand_1)
-    operand_2 = int (operand_2)
-  
-    print(operand_1, operand_2)
-    
+    operand_2 =  int(operand_2)
     output = fast_multiplication.kartatsuba_multipliation(operand_1, operand_2)
+    formatted_output =  "Result:>"+ str(operand_1) +"*"+ str(operand_2) + " = " + str(output)
+    fast_multiplication.write_final_resut(formatted_output)
+    fast_multiplication.output_file .close()
     
-    print(output)
-    
-    fast_multiplication.write_out('outputPS2.txt',str(output))
 
 if __name__ == '__main__':   
     main()              
